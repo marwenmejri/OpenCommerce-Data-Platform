@@ -145,43 +145,5 @@ Each DAG uses small reusable functions in `utils/` for clarity and testability.
 
 ---
 
-## Example contribution workflow (GitHub)
-
-1. Fork the repo
-2. Create a branch `feature/<short-name>`
-3. Implement changes, add tests
-4. Open a PR with description and checklist
-
----
-
-## Troubleshooting
-
-### Airflow email sending failing with `ConnectionRefusedError`
-- Confirm SMTP credentials and firewall rules.
-- From inside Airflow container, test connection with Python: `smtplib.SMTP('smtp.gmail.com',587).starttls()`.
-- Ensure `smtp_default` Airflow connection is either configured or `send_email_smtp` is called with explicit `smtp_host`/`smtp_port` overrides.
-
-### dbt tests appear to pass even though tests failed
-- Ensure the CLI call does not swallow dbt’s non-zero exit codes (don’t append `|| echo` in bash command). Use PythonOperator that runs `subprocess.run(..., check=True)` or inspect `run_results.json` and raise when failures exist.
-
----
-
-## Next steps (I can implement for you)
-
-- `scraper_utils.py` + example product scraper (aiohttp or Playwright) and DAG to run it.
-- Snowflake ingestion code + DAG using `snowflake-connector-python`.
-- A fully working dbt project skeleton with example models & tests.
-- Unit tests and GitHub Actions workflow.
-
-Tell me which of the next steps you want me to generate first and I’ll scaffold it with code and Docker config.
-
----
-
-## License
-
-MIT — feel free to use and adapt for learning and demo purposes.
-
----
-
-*Created for Marwen — ready to push to GitHub.*
+*Created by Marwen Mejri.*
 
