@@ -1,0 +1,13 @@
+boto3
+minio
+requests
+beautifulsoup4
+lxml
+pandas
+snowflake-connector-python
+dbt-core==1.5.0
+dbt-snowflake==1.5.0
+python-dotenv
+apache-airflow==2.9.3
+sqlalchemy
+psycopg2-binary

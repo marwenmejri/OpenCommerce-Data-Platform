@@ -1,0 +1,100 @@
+version: "3.9"
+
+services:
+  op_postgres:
+    image: postgres:15
+    container_name: op_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: superset
+      POSTGRES_PASSWORD: superset
+      POSTGRES_DB: opencommerce
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+
+  airflow:
+    image: apache/airflow:2.9.3-python3.11
+    container_name: airflow
+    depends_on:
+      - op_postgres
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://superset:superset@op_postgres/opencommerce
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__WEBSERVER__RBAC: "true"
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "true"
+    ports:
+      - "8080:8080"
+    command: >
+      bash -c "
+        airflow db migrate &&
+        airflow users create --username admin --firstname Admin --lastname User --role Admin --email admin@example.com --password admin || true &&
+        airflow scheduler &
+        airflow webserver
+      "
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs # ✅ Persist logs
+      # - ./airflow/plugins:/opt/airflow/plugins # optional, for custom operators
+    restart: on-failure
+
+  superset:
+    image: apache/superset:latest
+    container_name: superset
+    depends_on:
+      - op_postgres
+    environment:
+      SUPERSET_SECRET_KEY: "this_is_a_strong_secret_key_123"
+      DATABASE_DIALECT: postgresql
+      DATABASE_USER: superset
+      DATABASE_PASSWORD: superset
+      DATABASE_DB: opencommerce
+      DATABASE_HOST: op_postgres
+      DATABASE_PORT: 5432
+    ports:
+      - "8088:8088"
+    volumes:
+      - superset_home:/app/superset_home
+    command: >
+      bash -c "
+        superset db upgrade &&
+        superset fab create-admin --username admin --firstname Admin --lastname User --email admin@example.com --password admin ||
+        true &&
+        superset init &&
+        gunicorn --bind 0.0.0.0:8088 'superset.app:create_app()'
+      "
+    restart: on-failure
+
+  scraper:
+    build:
+      context: .
+    container_name: opencommerce_data_platform_scraper
+    # command: python3 main.py
+    depends_on:
+      - minio
+      - op_postgres
+    restart: on-failure
+
+volumes:
+  postgres_data:
+  minio_data:
+  superset_home:
+
+networks:
+  default:
+    driver: bridge
