@@ -28,7 +28,9 @@ services:
       - minio_data:/data
 
   airflow:
-    image: apache/airflow:2.9.3-python3.11
+    build:
+      context: ./airflow
+      dockerfile: Dockerfile
     container_name: airflow
     depends_on:
       - op_postgres
@@ -49,8 +51,8 @@ services:
       "
     volumes:
       - ./airflow/dags:/opt/airflow/dags
-      - ./airflow/logs:/opt/airflow/logs # ✅ Persist logs
-      # - ./airflow/plugins:/opt/airflow/plugins # optional, for custom operators
+      - ./airflow/logs:/opt/airflow/logs
+      - ./scripts:/opt/airflow/scripts # ✅ Mount scripts here
     restart: on-failure
 
   superset:
