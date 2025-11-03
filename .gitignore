@@ -1,0 +1,51 @@
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.env
+.venv/
+*.log
+
+# --- Airflow ---
+airflow/logs/
+airflow/__pycache__/
+airflow/plugins/__pycache__/
+airflow/airflow-webserver.pid
+airflow/unittests.cfg
+
+# --- Superset ---
+superset_home/
+superset_home.db
+*.db
+
+# --- PostgreSQL ---
+postgres_data/
+*.sql~
+
+# --- MinIO ---
+minio_data/
+
+# --- Docker ---
+*.pid
+*.tar
+*.tmp
+.docker/
+docker-compose.override.yml
+**/.DS_Store
+
+# --- VSCode / IDEs ---
+.vscode/
+.idea/
+*.iml
+
+# --- System ---
+.DS_Store
+Thumbs.db
+
+# --- Credentials / Secrets ---
+.env.local
+.env.production
+.env.dev
+secrets.json
