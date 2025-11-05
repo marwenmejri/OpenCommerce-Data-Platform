@@ -34,12 +34,8 @@ services:
     container_name: airflow
     depends_on:
       - op_postgres
-    environment:
-      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://superset:superset@op_postgres/opencommerce
-      AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__WEBSERVER__RBAC: "true"
-      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "true"
+    env_file:
+      - .env
     ports:
       - "8080:8080"
     command: >
@@ -52,7 +48,7 @@ services:
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
-      - ./scripts:/opt/airflow/scripts # ✅ Mount scripts here
+      - ./scripts:/opt/airflow/scripts
     restart: on-failure
 
   superset:
