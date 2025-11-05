@@ -1,0 +1,21 @@
+# Core Airflow dependencies
+SQLAlchemy<2.0
+psycopg2-binary
+
+# For MinIO / S3 interactions
+boto3
+minio
+
+# For Snowflake ingestion
+snowflake-connector-python
+snowflake-sqlalchemy
+
+# Optional: dbt tests triggered from Airflow
+dbt-core
+dbt-snowflake
+
+# General utilities
+pandas
+pyyaml
+requests
+ipython
