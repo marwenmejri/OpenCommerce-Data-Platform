@@ -52,7 +52,9 @@ services:
     restart: on-failure
 
   superset:
-    image: apache/superset:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.superset
     container_name: superset
     depends_on:
       - op_postgres

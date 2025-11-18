@@ -1,0 +1,10 @@
+FROM apache/superset:latest
+
+USER root
+
+# Install psycopg2 dependencies + pip inside venv
+RUN /app/.venv/bin/python -m ensurepip --upgrade && \
+    /app/.venv/bin/python -m pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    /app/.venv/bin/python -m pip install --no-cache-dir psycopg2-binary
+
+USER superset
